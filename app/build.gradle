@@ -82,5 +82,5 @@ dependencies {
     compile 'com.github.chrisbanes:PhotoView:2.0.0'
     // Event bus
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile project(':filepicker')
+    compile project(':library')
 }
