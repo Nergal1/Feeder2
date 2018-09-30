@@ -8,7 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +38,7 @@ import com.feeder.model.ArticleDao;
 import com.feeder.model.Subscription;
 import com.feeder.model.SubscriptionDao;
 import com.google.common.base.Strings;
+import com.just.agentweb.AgentWeb;
 
 
 import java.util.ArrayList;
@@ -67,6 +71,9 @@ public class ArticleActivity extends BaseSwipeActivity implements View.OnClickLi
 
     private ImageButton mPreviousBtn;
     private ImageButton mNextBtn;
+    private LinearLayout mLinearLayout;
+    private boolean webShowState = false;
+    private AgentWeb mAgentWeb;
 
     private boolean mIsClickEnabled= true;
     private boolean mIsLoading;
@@ -97,7 +104,16 @@ public class ArticleActivity extends BaseSwipeActivity implements View.OnClickLi
                         if (mArticle == null || Strings.isNullOrEmpty(mArticle.getLink())) {
                             return false;
                         }
-                        IntentUtil.openUrl(ArticleActivity.this, mArticle.getLink());
+//                        IntentUtil.openUrl(ArticleActivity.this, mArticle.getLink());
+                        mLinearLayout.setVisibility(View.VISIBLE);
+                        webShowState = true;
+                        mAgentWeb = AgentWeb.with(ArticleActivity.this)//传入Activity
+                                .setAgentWebParent(mLinearLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))//传入AgentWeb 的父控件 ，如果父控件为 RelativeLayout ， 那么第二参数需要传入 RelativeLayout.LayoutParams
+                                .useDefaultIndicator()// 使用默认进度条
+                                .createAgentWeb()//
+                                .ready()
+                                .go(mArticle.getLink());
+
                         break;
                     case R.id.action_fav:
                         if (mArticle != null) {
@@ -118,12 +134,22 @@ public class ArticleActivity extends BaseSwipeActivity implements View.OnClickLi
                         showShareMenu();
                         StatManager.statEvent(ArticleActivity.this, StatManager.EVENT_MENU_SHARE_CLICK);
                         break;
+                    case R.id.action_btn:
+                        if (webShowState) {
+                            mLinearLayout.setVisibility(View.INVISIBLE);
+                            webShowState = false;
+                        }else {
+                            mLinearLayout.setVisibility(View.VISIBLE);
+                            webShowState = true;
+                        }
+                        break;
                 }
                 return false;
             }
         });
 
         mScrollView = (ScrollView) findViewById(R.id.scroll_container);
+        mLinearLayout = (LinearLayout) findViewById(R.id.content_parent_linear);
 
         mTitleTextView = (TextView) findViewById(R.id.article_title);
         mDateTextView = (TextView) findViewById(R.id.article_date);

@@ -1,6 +1,9 @@
 package com.feeder.android;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 
 import com.feeder.android.util.ImageLoaderManager;
 import com.feeder.common.LogUtil;
@@ -22,7 +25,7 @@ import me.zsr.feeder.R;
  * @date: 7/22/16
  */
 // Mark : use account as collection
-public class App extends Application {
+public class App extends MultiDexApplication {
 
     @Override
     public void onCreate() {
@@ -52,4 +55,17 @@ public class App extends Application {
 
         AccountModel.setDefaultAccountName(getResources().getString(R.string.default_account_name));
     }
+
+    /**
+     * 分割 Dex 支持* @param base
+     */
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+
+
+
+
 }

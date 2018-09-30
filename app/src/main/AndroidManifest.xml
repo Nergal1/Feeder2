@@ -40,7 +40,9 @@
         <activity
             android:name="com.feeder.android.view.article.ArticleActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait">
+            android:hardwareAccelerated="true"
+            android:configChanges="orientation|screenSize"
+            >
         </activity>
         <activity
             android:name="com.feeder.android.view.articlelist.ArticleListActivity"
